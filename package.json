@@ -1,0 +1,40 @@
+{
+  "name": "CvManagment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "concurrently \"npm run dev\" \"npm run client\"",
+    "dev": "nodemon server.js",
+    "server": "node server.js",
+    "client": "cd client && npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^2.1.0",
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
+    "cors": "^2.8.5",
+    "dateformat": "^3.0.3",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "generate-password": "^1.4.1",
+    "jsonwebtoken": "^8.4.0",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.13",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "nodemailer": "^5.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "nodemon": "^1.18.7",
+    "npm-check": "^5.9.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "session-file-store": "^1.2.0",
+    "winston": "^3.1.0",
+    "xoauth2": "^1.2.0"
+  }
+}
