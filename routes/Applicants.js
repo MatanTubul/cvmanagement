@@ -166,7 +166,7 @@ applicants.get('/getapplicant', async (req, res) => {
             res.status(404).json({'error':'Failed to find applicant'})
         }
     } catch(err) {
-        winston.error(err)
+        winston.error(err)-
         res.sendStatus(500).send('error: ' + err)
     }
 })
@@ -198,5 +198,6 @@ applicants.put('/decline', async (req, res) => {
         res.sendStatus(500).send('error: ' + err)
     }
 })
+
 
 module.exports = applicants

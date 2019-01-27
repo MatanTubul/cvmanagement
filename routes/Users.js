@@ -45,27 +45,27 @@ users.post('/register',  async (req, res) => {
                 req.body.userName,
                 "Welcome to CvManagment",
                 ["Hello "+req.body.firstName+",<br><br> use attached password "+userData.password,
-                " in order to sign in to CvManagment.<br>"
+                    " in order to sign in to CvManagment.<br>"
                 ].join('')
             )
             // save hashed password and sending mail to new user including is password
             bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS , (err, hash) => {
                 userData.password = hash
                 User.create(userData)
-                .then(user => {
-                    mailer.smtpTransport.sendMail(mail, function(error, response) {
-                        if (error) {
-                            winston.error(error)
-                        } else {
-                            winston.info("Mail sent: " + response.message)
-                        }
-                    }) 
-                    res.json({message: user.userName + ' registered'})
-                   
-                })
-                .catch(err => {
-                    res.json('error: ' + err)
-                })
+                    .then(user => {
+                        mailer.smtpTransport.sendMail(mail, function(error, response) {
+                            if (error) {
+                                winston.error(error)
+                            } else {
+                                winston.info("Mail sent: " + response.message)
+                            }
+                        })
+                        res.json({message: user.userName + ' registered'})
+
+                    })
+                    .catch(err => {
+                        res.json('error: ' + err)
+                    })
             })
         } else {
             winston.info("User registration failed")
@@ -118,7 +118,7 @@ users.post('/login', async (req, res) => {
 })
 
 users.post('/forgotpassword', async (req, res) => {
-    
+
     try {
         user = await User.findOne({
             userName: req.body.userName,
@@ -127,25 +127,25 @@ users.post('/forgotpassword', async (req, res) => {
         winston.info('User: '+ user + " try to reset password id:" + user._id)
         if (user) {
             const token = crypto.randomBytes(20).toString('hex')
-            user.resetPasswordToken = token 
+            user.resetPasswordToken = token
             user.resetPasswordExpires = Date.now() + 360000
             user.save(function(err) {
                 if (err) {
                     winston.error(err)
                 }
             })
-            
+
 
             // Sending reset password link to user mail
             const mailOptions = mailer.setMailOptions(
                 user.userName,
                 'CvManagment Link to Reset Password',
                 ["Hello " +user.firstName+ ",<br><br>",
-                "You received this email because we received a request for reset the password for your account.<br>", 
-                "If you did not request reset the password for your account, you can safely delete this email.<br>",
-                "In order to reset your account password please click on the attached Link:<br>", 
-                "http://localhost:3000/reset/"+token+"<br>"
-            ].join(''))
+                    "You received this email because we received a request for reset the password for your account.<br>",
+                    "If you did not request reset the password for your account, you can safely delete this email.<br>",
+                    "In order to reset your account password please click on the attached Link:<br>",
+                    "http://localhost:3000/reset/"+token+"<br>"
+                ].join(''))
 
             mailer.smtpTransport.sendMail(mailOptions, function(error, response) {
                 if (error) {
@@ -160,7 +160,7 @@ users.post('/forgotpassword', async (req, res) => {
         }
     } catch (err) {
         winston.error(err)
-        res.sendStatus(500).send('error: ' + err)
+        res.status(500).json({'error':err})
     }
 })
 
@@ -170,9 +170,9 @@ users.get('/verifytoken', async (req, res, next) => {
         user =  await User.findOne({
             resetPasswordToken: req.query.resetPasswordToken
         })
-        .where('resetPasswordExpires').gt(new Date())
-        .select('userName')
-       
+            .where('resetPasswordExpires').gt(new Date())
+            .select('userName')
+
         winston.info(user)
 
         if (!user) {
@@ -186,12 +186,12 @@ users.get('/verifytoken', async (req, res, next) => {
                 message: 'Password reset link is valid'
             })
         }
-    
+
     } catch (err) {
         winston.error(err)
         res.sendStatus(500).send('error: ' + err)
     }
-    
+
 })
 
 users.post('/resetpassword', async  (req, res) => {
@@ -242,7 +242,31 @@ users.get('/users', async (req, res, next) => {
         winston.error(err)
         res.sendStatus(500).send('error: ' + err)
     }
-   
+
+})
+
+users.put('/edituser', async (req, res) => {
+    try {
+        user = await User.findOne({
+            userName: req.body.userName
+        })
+        if(user) {
+            user.firstName = req.body.firstName
+            user.lastName = req.body.lastName
+            user.save(function(err) {
+                if (err) {
+                    winston.error(err)
+                }else {
+                    res.json({message:'User deleted'})
+                }
+            })
+        } else {
+            res.status(404).json({'error':'Failed to delete user, not found'})
+        }
+    }catch (err) {
+        winston.error(err)
+        res.sendStatus(500).send('error: ' + err)
+    }
 })
 
 users.put('/deleteuser', async  (req,res) => {

@@ -43,7 +43,8 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     secret: 'JcHTHqwBhZjbgAPYex2EudUS52hv5VpU',
-    cookie: { maxAge: 3600000,secure: false, httpOnly: true }
+    cookie: { maxAge: 24 * 60 * 60 * 1000
+        ,secure: false, httpOnly: true, expires:false }
 }));
 
 app.use(bodyParser.json());
@@ -67,6 +68,7 @@ let Applicants = require('./routes/Applicants');
 
 app.use('/api',sessionHandler, Users);
 app.use('/api',sessionHandler,Applicants);
+app.use(express.static( process.env.PWD + '/public'));
 app.use(morgan('combined', { stream: winston.stream }));
 
 app.listen(port, () => {
