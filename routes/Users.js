@@ -8,7 +8,8 @@ const winston = require('../config/winston');
 const User = require("../models/User");
 const mailer = require("../utils/mailer");
 const crypto = require('crypto');
-
+const host = process.env.HOST || '127.0.0.1'
+const port = process.env.PORT || 3000;
 users.use(cors());
 const BCRYPT_SALT_ROUNDS = 10;
 process.env.SECRET_KEY = 'HqW6;zv=;Kp8*{mj<ynIT5u"@,%hAz<bA)<Vc57IsU<q(cdQ4Qu%~`sX<9(t(q{';
@@ -144,7 +145,7 @@ users.post('/forgotpassword', async (req, res) => {
                     "You received this email because we received a request for reset the password for your account.<br>",
                     "If you did not request reset the password for your account, you can safely delete this email.<br>",
                     "In order to reset your account password please click on the attached Link:<br>",
-                    "http://localhost:3000/reset/"+token+"<br>"
+                    "http://"+process.env.HOST+":"+process.env.PORT+"/reset/"+token+"<br>"
                 ].join(''));
 
             mailer.smtpTransport.sendMail(mailOptions, function(error, response) {

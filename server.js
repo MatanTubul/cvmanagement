@@ -8,8 +8,8 @@ const morgan = require('morgan');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const path = require('path');
-const port = process.env.PORT || 5000;
-const host = process.env.HOST || '127.0.0.1'
+process.env.PORT = process.env.PORT || 5000;
+process.env.HOST = process.env.HOST || 'localhost'
 
 /**
  * Function which protect on server api using File-Store-Session
@@ -86,7 +86,10 @@ if (process.env.NODE_ENV === 'production') {
 
 }
 
-app.listen(port, host, () => {
-    winston.info("Server is running: " +host +":"+ port)
+app.listen(process.env.PORT, process.env.HOST, () => {
+    winston.info("Server is running: "
+        +process.env.HOST
+        +":"
+        + process.env.PORT)
     winston.info("Build: "+ process.env.NODE_ENV)
 });
