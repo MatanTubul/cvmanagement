@@ -1,14 +1,14 @@
 {
   "name": "CvManagment",
   "version": "1.0.0",
-  "description": "",
+  "description": "Web application for HR managing applicants ",
   "main": "server.js",
   "scripts": {
     "start": "concurrently \"npm run dev\" \"npm run client\"",
     "dev": "nodemon server.js",
     "server": "node server.js",
     "client": "cd client && npm start",
-    "production": "NODE_ENV=production PORT=5444 node server.js"
+    "production": "NODE_ENV=production PORT=5000 node server.js"
   },
   "keywords": [],
   "author": "",
