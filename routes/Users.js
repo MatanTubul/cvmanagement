@@ -4,14 +4,14 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const generator = require('generate-password');
-const winston = require('../config/winston')
+const winston = require('../config/winston');
 const User = require("../models/User");
-const mailer = require("../utils/mailer")
+const mailer = require("../utils/mailer");
 const crypto = require('crypto');
 
 users.use(cors());
 const BCRYPT_SALT_ROUNDS = 10;
-process.env.SECRET_KEY = 'HqW6;zv=;Kp8*{mj<ynIT5u"@,%hAz<bA)<Vc57IsU<q(cdQ4Qu%~`sX<9(t(q{'
+process.env.SECRET_KEY = 'HqW6;zv=;Kp8*{mj<ynIT5u"@,%hAz<bA)<Vc57IsU<q(cdQ4Qu%~`sX<9(t(q{';
 
 function genuuid() {
     var sha = crypto.createHash('sha256');
@@ -23,12 +23,12 @@ function genuuid() {
  *  Register a new user
  */
 users.post('/register',  async (req, res) => {
-    let user
+    let user;
     try {
         user =  await User.findOne({
             userName: req.body.userName
-        })
-        winston.info('User: '+ user + " try to register")
+        });
+        winston.info('User: '+ user + " try to register");
         if(!user) {
             const userData = {
                 firstName: req.body.firstName,
@@ -38,19 +38,19 @@ users.post('/register',  async (req, res) => {
                     length: 8,
                     numbers: true
                 })
-            }
+            };
             // Setup mail for new user
-            winston.info("Sending registration succesful mail to user "+ user)
+            winston.info("Sending registration succesful mail to user "+ user);
             let mail = mailer.setMailOptions(
                 req.body.userName,
                 "Welcome to CvManagment",
                 ["Hello "+req.body.firstName+",<br><br> use attached password "+userData.password,
                     " in order to sign in to CvManagment.<br>"
                 ].join('')
-            )
+            );
             // save hashed password and sending mail to new user including is password
             bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS , (err, hash) => {
-                userData.password = hash
+                userData.password = hash;
                 User.create(userData)
                     .then(user => {
                         mailer.smtpTransport.sendMail(mail, function(error, response) {
@@ -59,7 +59,7 @@ users.post('/register',  async (req, res) => {
                             } else {
                                 winston.info("Mail sent: " + response.message)
                             }
-                        })
+                        });
                         res.json({message: user.userName + ' registered'})
 
                     })
@@ -68,27 +68,27 @@ users.post('/register',  async (req, res) => {
                     })
             })
         } else {
-            winston.info("User registration failed")
+            winston.info("User registration failed");
             res.json({error: 'User already exists'})
         }
 
     } catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
-})
+});
 
 /**
  *  Login endpoint
  */
 users.post('/login', async (req, res) => {
-    let user
+    let user;
     try {
         user = await User.findOne({
             userName: req.body.userName,
             isDeleted: false
-        })
-        winston.info('User: '+ user + " try to login")
+        });
+        winston.info('User: '+ user + " try to login");
         if (user) {
             if(bcrypt.compareSync(req.body.password, user.password)) {
                 const payload = {
@@ -96,26 +96,26 @@ users.post('/login', async (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     userName: user.userName
-                }
-                winston.info("Password is correct")
+                };
+                winston.info("Password is correct");
                 let token = jwt.sign(payload, process.env.SECRET_KEY, {
                     expiresIn: 1440
-                })
-                req.session.sessionID = genuuid()
-                winston.info("session %j", req.session)
+                });
+                req.session.sessionID = genuuid();
+                winston.info("session %j", req.session);
                 res.json({message: token})
             } else {
-                req.session.destroy()
+                req.session.destroy();
                 res.json({ error: "Credentials is incorrect "})
             }
         } else {
             res.json({ error: "User does not exist"})
         }
     } catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
-})
+});
 
 users.post('/forgotpassword', async (req, res) => {
 
@@ -123,17 +123,17 @@ users.post('/forgotpassword', async (req, res) => {
         user = await User.findOne({
             userName: req.body.userName,
             isDeleted: false
-        })
-        winston.info('User: '+ user + " try to reset password id:" + user._id)
+        });
+        winston.info('User: '+ user + " try to reset password id:" + user._id);
         if (user) {
-            const token = crypto.randomBytes(20).toString('hex')
-            user.resetPasswordToken = token
-            user.resetPasswordExpires = Date.now() + 360000
+            const token = crypto.randomBytes(20).toString('hex');
+            user.resetPasswordToken = token;
+            user.resetPasswordExpires = Date.now() + 360000;
             user.save(function(err) {
                 if (err) {
                     winston.error(err)
                 }
-            })
+            });
 
 
             // Sending reset password link to user mail
@@ -145,7 +145,7 @@ users.post('/forgotpassword', async (req, res) => {
                     "If you did not request reset the password for your account, you can safely delete this email.<br>",
                     "In order to reset your account password please click on the attached Link:<br>",
                     "http://localhost:3000/reset/"+token+"<br>"
-                ].join(''))
+                ].join(''));
 
             mailer.smtpTransport.sendMail(mailOptions, function(error, response) {
                 if (error) {
@@ -153,34 +153,34 @@ users.post('/forgotpassword', async (req, res) => {
                 } else {
                     winston.info("Mail sent to: " + user.userName)
                 }
-            })
+            });
             res.status(200).json({message: "recovery email sent"})
         } else {
             res.json({ error: "User does not exist"})
         }
     } catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.status(500).json({'error':err})
     }
-})
+});
 
 users.get('/verifytoken', async (req, res, next) => {
-    winston.info("Verify token: "+ req.query.resetPasswordToken)
+    winston.info("Verify token: "+ req.query.resetPasswordToken);
     try {
         user =  await User.findOne({
             resetPasswordToken: req.query.resetPasswordToken
         })
             .where('resetPasswordExpires').gt(new Date())
-            .select('userName')
+            .select('userName');
 
-        winston.info(user)
+        winston.info(user);
 
         if (!user) {
-            winston.info('Password reset link is invalid')
+            winston.info('Password reset link is invalid');
             res.json({error: "Link is invalid"})
         } else {
-            winston.info('Password reset link is valid')
-            winston.info(user.userName)
+            winston.info('Password reset link is valid');
+            winston.info(user.userName);
             res.json({
                 userName: user.userName,
                 message: 'Password reset link is valid'
@@ -188,26 +188,26 @@ users.get('/verifytoken', async (req, res, next) => {
         }
 
     } catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
 
-})
+});
 
 users.post('/resetpassword', async  (req, res) => {
     try {
-        const password = req.body.password
+        const password = req.body.password;
         user = await User.findOne({
             userName: req.body.userName
-        })
+        });
         if(user) {
-            winston.info("Updating password for user: "+user)
+            winston.info("Updating password for user: "+user);
             bcrypt.hash(password, BCRYPT_SALT_ROUNDS , (err, hash) => {
-                winston.info(hash)
-                user.password = hash
+                winston.info(hash);
+                user.password = hash;
                 user.save(function(err) {
                     if (err) {
-                        winston.error(err)
+                        winston.error(err);
                         res.sendStatus(500).json({'error':err})
 
                     }else {
@@ -220,39 +220,39 @@ users.post('/resetpassword', async  (req, res) => {
         }
 
     }catch (e) {
-        winston.error(e)
+        winston.error(e);
         res.sendStatus(500).json({'error':e})
     }
-})
+});
 
 users.get('/users', async (req, res, next) => {
     try {
-        winston.info("get users list")
+        winston.info("get users list");
         const users =  await User.find({
             isDeleted: false
-        }).select('firstName lastName userName -_id')
+        }).select('firstName lastName userName -_id');
 
-        winston.info("Users: "+ users)
+        winston.info("Users: "+ users);
         if(users) {
             res.json({data: users})
         } else {
             res.json({error: "Users list is empty or unavailable"})
         }
     }catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
 
-})
+});
 
 users.put('/edituser', async (req, res) => {
     try {
         user = await User.findOne({
             userName: req.body.userName
-        })
+        });
         if(user) {
-            user.firstName = req.body.firstName
-            user.lastName = req.body.lastName
+            user.firstName = req.body.firstName;
+            user.lastName = req.body.lastName;
             user.save(function(err) {
                 if (err) {
                     winston.error(err)
@@ -264,20 +264,20 @@ users.put('/edituser', async (req, res) => {
             res.status(404).json({'error':'Failed to delete user, not found'})
         }
     }catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
-})
+});
 
 users.put('/deleteuser', async  (req,res) => {
     try {
-        let userToDelete = req.body.userName
+        let userToDelete = req.body.userName;
         user =  await User.findOne({
             userName: userToDelete
-        })
+        });
         if (user) {
-            winston.info("Deleting user "+ user)
-            user.isDeleted=true
+            winston.info("Deleting user "+ user);
+            user.isDeleted=true;
             user.save(function(err) {
                 if (err) {
                     winston.error(err)
@@ -289,18 +289,18 @@ users.put('/deleteuser', async  (req,res) => {
             res.status(404).json({'error':'Failed to delete user, not found'})
         }
     }catch (err) {
-        winston.error(err)
+        winston.error(err);
         res.sendStatus(500).send('error: ' + err)
 
     }
-})
+});
 
 users.put('/logout', async  (req,res) => {
     try {
-        winston.info('Logout: destroy session')
+        winston.info('Logout: destroy session');
         req.session.destroy(function (err) {
             if (err) {
-                winston.error(err)
+                winston.error(err);
                 res.status(500).send('error: ' + err)
             } else {
                 res.json({data: 'ok'})
@@ -308,6 +308,6 @@ users.put('/logout', async  (req,res) => {
         })
     } catch (e) {
     }
-})
+});
 
-module.exports = users
+module.exports = users;
