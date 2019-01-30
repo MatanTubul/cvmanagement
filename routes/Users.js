@@ -118,6 +118,9 @@ users.post('/login', async (req, res) => {
     }
 });
 
+/**
+ * Forgot password link generation
+ */
 users.post('/forgotpassword', async (req, res) => {
 
     try {
@@ -165,6 +168,10 @@ users.post('/forgotpassword', async (req, res) => {
     }
 });
 
+/**
+ * Verify if password reset token is valid
+ *
+ */
 users.get('/verifytoken', async (req, res, next) => {
     winston.info("Verify token: "+ req.query.resetPasswordToken);
     try {
@@ -195,6 +202,9 @@ users.get('/verifytoken', async (req, res, next) => {
 
 });
 
+/**
+ * Updating user password
+ */
 users.post('/resetpassword', async  (req, res) => {
     try {
         const password = req.body.password;
@@ -226,6 +236,9 @@ users.post('/resetpassword', async  (req, res) => {
     }
 });
 
+/**
+ * Get all users which is not invoked
+ */
 users.get('/users', async (req, res, next) => {
     try {
         winston.info("get users list");
@@ -246,6 +259,9 @@ users.get('/users', async (req, res, next) => {
 
 });
 
+/**
+ * Edit user details
+ */
 users.put('/edituser', async (req, res) => {
     try {
         user = await User.findOne({
@@ -270,6 +286,9 @@ users.put('/edituser', async (req, res) => {
     }
 });
 
+/**
+ * Invoking user from the web application
+ */
 users.put('/deleteuser', async  (req,res) => {
     try {
         let userToDelete = req.body.userName;
@@ -296,6 +315,9 @@ users.put('/deleteuser', async  (req,res) => {
     }
 });
 
+/**
+ * Logout user and terminating session
+ */
 users.put('/logout', async  (req,res) => {
     try {
         winston.info('Logout: destroy session');

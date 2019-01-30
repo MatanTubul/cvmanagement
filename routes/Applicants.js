@@ -26,6 +26,9 @@ const upload = multer({
     limits: {fileSize:4194304}
 });
 
+/**
+ * Add a new HR applicant including Resume file
+ */
 applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
 
     winston.info("add applicant");
@@ -75,6 +78,9 @@ applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
     }
 });
 
+/**
+ * Edit a specific applicant detail, status
+ */
 applicants.put('/editapplicant', upload.single('resume'),async (req, res) => {
     try {
         let applicantMail = req.body.mail;
@@ -114,6 +120,9 @@ applicants.put('/editapplicant', upload.single('resume'),async (req, res) => {
     }
 });
 
+/**
+ * Get all applicants option to add a declined applicants
+ */
 applicants.get('/applicants', async (req, res) => {
     try {
         // winston.info(req.session.token)
@@ -139,6 +148,10 @@ applicants.get('/applicants', async (req, res) => {
     }
 });
 
+/**
+ * Get a specific applicant object before
+ * redirecting to edit mode
+ */
 applicants.get('/getapplicant', async (req, res) => {
     try {
         let applicantId = req.query.mobile;
@@ -171,6 +184,9 @@ applicants.get('/getapplicant', async (req, res) => {
     }
 });
 
+/**
+ * Set applicant status to declined
+ */
 applicants.put('/decline', async (req, res) => {
     try{
         let applicantMobile = req.body.mobile;

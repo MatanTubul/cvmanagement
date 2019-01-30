@@ -2,6 +2,10 @@ var nodemailer = require("nodemailer");
 var xoauth2 = require('xoauth2');
 var transport = require('nodemailer-smtp-transport');
 
+/**
+ *  Mailer util which send mails to users regarding password changes
+ *  and registration
+ */
 const smtpTransport = nodemailer.createTransport({
     service: "Gmail",
     auth: {
