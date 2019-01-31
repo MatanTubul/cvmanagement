@@ -1,6 +1,4 @@
-var nodemailer = require("nodemailer");
-var xoauth2 = require('xoauth2');
-var transport = require('nodemailer-smtp-transport');
+const nodemailer = require("nodemailer");
 
 /**
  *  Mailer util which send mails to users regarding password changes
@@ -15,16 +13,16 @@ const smtpTransport = nodemailer.createTransport({
     }
 });
 function setMailOptions(to, subject, html) {
-    mailOptions={
+    let mailOptions={
         from: "Cv Managment",
         to :to,
         subject : subject,
         html : html 
-    }
+    };
     return mailOptions;
 }
 
 module.exports = {
     smtpTransport,
     setMailOptions
-}
+};

@@ -9,7 +9,7 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const path = require('path');
 process.env.PORT = process.env.PORT || 5000;
-process.env.HOST = process.env.HOST || 'localhost'
+process.env.HOST = process.env.HOST || 'localhost';
 
 /**
  * Function which protect on server api using File-Store-Session
@@ -18,7 +18,7 @@ process.env.HOST = process.env.HOST || 'localhost'
  * @param next
  */
 function sessionHandler(req, res, next) {
-    winston.info(req.url)
+    winston.info(req.url);
     if(req.url === '/login' ||
         req.url === '/forgotpassword' ||
         req.url === '/logout'
@@ -70,8 +70,8 @@ let Applicants = require('./routes/Applicants');
 
 app.use('/api',sessionHandler, Users);
 app.use('/api',sessionHandler,Applicants);
-let staticPath = path.join(__dirname,'public/cv')
-winston.info(staticPath)
+let staticPath = path.join(__dirname,'public/cv');
+winston.info(staticPath);
 app.use(morgan('combined', { stream: winston.stream }));
 
 app.use("/public/cv", sessionHandler, express.static(staticPath));
@@ -79,8 +79,8 @@ app.use("/public/cv", sessionHandler, express.static(staticPath));
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname,'./client/build')));
     app.get("/*", function (req, res) {
-        winston.info("Asdsadsa")
-        winston.info(path.join(__dirname, './client/build', 'index.html'))
+        winston.info("Asdsadsa");
+        winston.info(path.join(__dirname, './client/build', 'index.html'));
         res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
     })
 
@@ -90,6 +90,6 @@ app.listen(process.env.PORT, process.env.HOST, () => {
     winston.info("Server is running: "
         +process.env.HOST
         +":"
-        + process.env.PORT)
+        + process.env.PORT);
     winston.info("Build: "+ process.env.NODE_ENV)
 });

@@ -15,12 +15,12 @@ const storage = multer.diskStorage({
     filename: function (req, resume, cb) {
         if (resume.mimetype === 'application/pdf' ||
             resume.mimetype === 'application/msword') {
-            var ext = resume.mimetype.split('/')[1];
-            cb(null, req.body.mail.split("@")[0]+'.'+ext)
+            cb(null, req.body.cv)
         }
     }
 
 });
+
 const upload = multer({
     storage: storage,
     limits: {fileSize:4194304}
@@ -39,7 +39,7 @@ applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
         });
         if(!applicant) {
             let now = new Date();
-            data = {
+            let data = {
                 firstName: req.body.fname,
                 lastName: req.body.lname,
                 mobile: req.body.mobile,
@@ -54,20 +54,16 @@ applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
                 startDate: dateFormat(now, "dd-mm-yyyy")
             };
             winston.info("Add applicant:" +JSON.stringify(data, null, 2));
-            var newApplicant = new Applicant(data);
+            const newApplicant =  new Applicant(data);
             newApplicant.save(err => {
                 if (err) {
                     winston.error(err);
-                    res.json({'error':err})
+                    res.status(500).json({'error':err})
                 } else {
                     winston.info("Saved successfully");
-                    res.json({message:'success'})
+                    res.status(200).json({message:'success'})
                 }
             })
-            // res.json({message:'success'})
-            // TODO add applicant base on
-            //  "https://medium.freecodecamp.org/how-to-create-file-upload-with-react-and-node-2aa3f9aab3f0"
-
         }else {
             winston.info("Applicant "+ applicantMail + " already exists");
             res.json({error: 'User already exists'})
@@ -156,12 +152,12 @@ applicants.get('/getapplicant', async (req, res) => {
     try {
         let applicantId = req.query.mobile;
         winston.info("Get applicant data: "+ applicantId);
-        applicant = await Applicant.findOne({
+        let applicant = await Applicant.findOne({
             mobile: applicantId
         });
         winston.info("Finding applicant: " + applicant);
         if(applicant) {
-            data = {};
+            let data = {};
             data['fname'] = applicant.firstName;
             data['lname'] = applicant.lastName;
             data['mobile'] = applicant.mobile;
@@ -191,7 +187,7 @@ applicants.put('/decline', async (req, res) => {
     try{
         let applicantMobile = req.body.mobile;
         winston.info(applicantMobile);
-        applicant = await Applicant.findOne({
+        let applicant = await Applicant.findOne({
             mobile: applicantMobile
         });
         winston.info(applicant);

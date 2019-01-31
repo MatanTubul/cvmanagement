@@ -8,14 +8,12 @@ const winston = require('../config/winston');
 const User = require("../models/User");
 const mailer = require("../utils/mailer");
 const crypto = require('crypto');
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000;
 users.use(cors());
 const BCRYPT_SALT_ROUNDS = 10;
 process.env.SECRET_KEY = 'HqW6;zv=;Kp8*{mj<ynIT5u"@,%hAz<bA)<Vc57IsU<q(cdQ4Qu%~`sX<9(t(q{';
 
 function genuuid() {
-    var sha = crypto.createHash('sha256');
+    let sha = crypto.createHash('sha256');
     sha.update(Math.random().toString());
     return sha.digest('hex');
 }
@@ -124,7 +122,7 @@ users.post('/login', async (req, res) => {
 users.post('/forgotpassword', async (req, res) => {
 
     try {
-        user = await User.findOne({
+        let user = await User.findOne({
             userName: req.body.userName,
             isDeleted: false
         });
@@ -143,7 +141,7 @@ users.post('/forgotpassword', async (req, res) => {
             // Sending reset password link to user mail
             const mailOptions = mailer.setMailOptions(
                 user.userName,
-                'CvManagment Link to Reset Password',
+                'CvManagement Link to Reset Password',
                 ["Hello " +user.firstName+ ",<br><br>",
                     "You received this email because we received a request for reset the password for your account.<br>",
                     "If you did not request reset the password for your account, you can safely delete this email.<br>",
@@ -175,7 +173,7 @@ users.post('/forgotpassword', async (req, res) => {
 users.get('/verifytoken', async (req, res, next) => {
     winston.info("Verify token: "+ req.query.resetPasswordToken);
     try {
-        user =  await User.findOne({
+        let user =  await User.findOne({
             resetPasswordToken: req.query.resetPasswordToken
         })
             .where('resetPasswordExpires').gt(new Date())
@@ -208,7 +206,7 @@ users.get('/verifytoken', async (req, res, next) => {
 users.post('/resetpassword', async  (req, res) => {
     try {
         const password = req.body.password;
-        user = await User.findOne({
+        let user = await User.findOne({
             userName: req.body.userName
         });
         if(user) {
@@ -264,7 +262,7 @@ users.get('/users', async (req, res, next) => {
  */
 users.put('/edituser', async (req, res) => {
     try {
-        user = await User.findOne({
+        let user = await User.findOne({
             userName: req.body.userName
         });
         if(user) {
@@ -292,7 +290,7 @@ users.put('/edituser', async (req, res) => {
 users.put('/deleteuser', async  (req,res) => {
     try {
         let userToDelete = req.body.userName;
-        user =  await User.findOne({
+        let user =  await User.findOne({
             userName: userToDelete
         });
         if (user) {
