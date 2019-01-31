@@ -1,6 +1,9 @@
 const mongoose = require("mongoose").set('debug',true)
 const Schema = mongoose.Schema;
 
+/**
+ * Applicant model
+ */
 const ApplicantSchema = new Schema({
     firstName: {
         required: true,

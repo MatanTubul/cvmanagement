@@ -1,6 +1,11 @@
 var appRoot = require('app-root-path');
 var winston = require('winston');
 
+/**
+ * Logger
+ * @type {{console: {handleExceptions: boolean, colorize: boolean, level: string, json: boolean, timestamp: boolean}, file: {filename: string, handleExceptions: boolean, colorize: boolean, level: string, json: boolean, maxsize: number, maxFiles: number}}}
+ */
+
 // define the custom settings for each transport (file, console)
 var options = {
     file: {
