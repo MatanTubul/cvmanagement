@@ -8,7 +8,7 @@
     "dev": "nodemon server.js",
     "server": "node server.js",
     "client": "cd client && npm start",
-    "production": "NODE_ENV=production PORT=5000 node server.js"
+    "production": "NODE_ENV=production PORT=5000 HOST=0.0.0.0 node server.js"
   },
   "keywords": [],
   "author": "",

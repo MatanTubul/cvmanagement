@@ -27,7 +27,7 @@ users.post('/register',  async (req, res) => {
         user =  await User.findOne({
             userName: req.body.userName
         });
-        winston.info('User: '+ user + " try to register");
+        winston.info('User: '+ req.body.userName + " try to register");
         if(!user) {
             const userData = {
                 firstName: req.body.firstName,
@@ -81,6 +81,7 @@ users.post('/register',  async (req, res) => {
  *  Login endpoint
  */
 users.post('/login', async (req, res) => {
+    winston.info(">>>>>>>>>>login>>>>>>>>>>>>")
     let user;
     try {
         user = await User.findOne({

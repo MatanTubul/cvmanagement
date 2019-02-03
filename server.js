@@ -25,6 +25,7 @@ function sessionHandler(req, res, next) {
     ) {
         next()
     }else {
+        winston.info("not a fallback url")
         if (req.session.sessionID) {
             next()
         } else {
@@ -35,7 +36,7 @@ function sessionHandler(req, res, next) {
 
 // File-Store-Session options
 const sess_options = {
-    path:'/tmp/sessions/',
+    path:'./sessions/',
     reapAsync: true
 };
 
@@ -59,7 +60,7 @@ app.use(
 );
 
 app.use(bodyParser.json({limit:'50mb'}));
-const mongoURI = 'mongodb://root:edco123@localhost:27017/cvmanagment';
+const mongoURI = 'mongodb://root:edco123@mongo:27017/cvmanagment';
 
 mongoose.connect(mongoURI, {useNewUrlParser: true})
     .then(() => winston.info("MongoDB connected"))
@@ -79,8 +80,6 @@ app.use("/public/cv", sessionHandler, express.static(staticPath));
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname,'./client/build')));
     app.get("/*", function (req, res) {
-        winston.info("Asdsadsa");
-        winston.info(path.join(__dirname, './client/build', 'index.html'));
         res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
     })
 
