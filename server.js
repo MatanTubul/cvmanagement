@@ -25,8 +25,6 @@ function sessionHandler(req, res, next) {
     ) {
         next()
     }else {
-        winston.info("not a fallback url")
-        winston.info("session %j",req.session)
         if (req.session.sessionID) {
             next()
         } else {
@@ -81,7 +79,7 @@ app.use("/public/cv", sessionHandler, express.static(staticPath));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname,'./client/build')));
-    app.get("/*", function (req, res) {
+    app.get("*", function (req, res) {
         res.attachment(path.resolve(__dirname, './client/build', 'index.html'));
     })
 

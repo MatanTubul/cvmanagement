@@ -1,6 +1,5 @@
 version: "2"
 services:
-
   mongo:
     container_name: mongo
     restart: always
@@ -21,7 +20,12 @@ services:
       build: .
       ports:
         - "5000:5000"
+      extra_hosts:
+        - "cvmanagement:192.168.3.149"
       links:
         - mongo
+      volumes:
+        - ./home/cvmangement/public/cv:/home/cvmangement/public/cv
+        - ./home/cvmangement/logs:/home/cvmangement/logs
       depends_on:
         - mongo
