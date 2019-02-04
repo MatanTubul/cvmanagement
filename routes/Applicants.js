@@ -86,7 +86,7 @@ applicants.put('/editapplicant', upload.single('resume'),async (req, res) => {
         });
         if(!applicant) {
             res.status(404).json({'error':'Failed to update applicant' +
-                ', not found'})
+                    ', not found'})
         }else {
             applicant.firstName = req.body.fname;
             applicant.lastName = req.body.lname;
@@ -122,6 +122,7 @@ applicants.put('/editapplicant', upload.single('resume'),async (req, res) => {
 applicants.get('/applicants', async (req, res) => {
     try {
         // winston.info(req.session.token)
+
         winston.info("GET applicants list with declined status "+req.query.declined);
         let filterDeclinedApplicants = req.query.declined;
         let showDeclined = '';
@@ -129,11 +130,21 @@ applicants.get('/applicants', async (req, res) => {
             winston.info("Users which not declined");
             showDeclined = 'Declined'
         }
-        const applicants = await Applicant.find({})
+        let applicants = await Applicant.find({})
             .where('stage').ne(showDeclined)
             .select('firstName lastName mobile role stage cv startDate  -_id');
         if(applicants) {
+            let domain = process.env.DOMAIN ? process.env.DOMAIN : 'localhost'
             winston.info(JSON.stringify(applicants, null, 4));
+            for(let i=0; i< applicants.length; i++ ) {
+                applicants[i].cv = "http://"+domain
+                    +":"
+                    +process.env.PORT
+                    +"/public/cv/"
+                    + applicants[i].cv
+            }
+
+            winston.info(applicants)
             res.json({data: applicants})
         }else {
             res.json({error: "Applicants list is empty or unavailable"})
@@ -203,13 +214,12 @@ applicants.put('/decline', async (req, res) => {
             })
         }else {
             res.status(404).json({'error':'Failed to decline applicant' +
-                ', not found'})
+                    ', not found'})
         }
     }catch (err) {
         winston.error(err);
         res.sendStatus(500).send('error: ' + err)
     }
 });
-
 
 module.exports = applicants;

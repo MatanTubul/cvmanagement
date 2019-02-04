@@ -81,7 +81,6 @@ users.post('/register',  async (req, res) => {
  *  Login endpoint
  */
 users.post('/login', async (req, res) => {
-    winston.info(">>>>>>>>>>login>>>>>>>>>>>>")
     let user;
     try {
         user = await User.findOne({

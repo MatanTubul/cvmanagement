@@ -26,6 +26,7 @@ function sessionHandler(req, res, next) {
         next()
     }else {
         winston.info("not a fallback url")
+        winston.info("session %j",req.session)
         if (req.session.sessionID) {
             next()
         } else {
@@ -60,7 +61,11 @@ app.use(
 );
 
 app.use(bodyParser.json({limit:'50mb'}));
-const mongoURI = 'mongodb://root:edco123@mongo:27017/cvmanagment';
+let mongoHost = "localhost"
+// if (process.env.NODE_ENV === 'production') {
+//     mongoHost = "mongo"
+// }
+const mongoURI = 'mongodb://root:edco123@'+mongoHost+':27017/cvmanagment';
 
 mongoose.connect(mongoURI, {useNewUrlParser: true})
     .then(() => winston.info("MongoDB connected"))
@@ -80,7 +85,7 @@ app.use("/public/cv", sessionHandler, express.static(staticPath));
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname,'./client/build')));
     app.get("/*", function (req, res) {
-        res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+        res.attachment(path.resolve(__dirname, './client/build', 'index.html'));
     })
 
 }
