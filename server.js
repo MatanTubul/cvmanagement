@@ -61,10 +61,7 @@ app.use(
 );
 
 app.use(bodyParser.json({limit:'50mb'}));
-let mongoHost = "localhost"
-// if (process.env.NODE_ENV === 'production') {
-//     mongoHost = "mongo"
-// }
+let mongoHost = process.env.NODE_ENV ? process.env.NODE_ENV : "localhost"
 const mongoURI = 'mongodb://root:edco123@'+mongoHost+':27017/cvmanagment';
 
 mongoose.connect(mongoURI, {useNewUrlParser: true})
