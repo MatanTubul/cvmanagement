@@ -1,3 +1,6 @@
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -11,6 +14,9 @@ const path = require('path');
 process.env.PORT = process.env.PORT || 5000;
 process.env.HOST = process.env.HOST || 'localhost';
 
+const privateKey  = fs.readFileSync('sslcert/wintventory.wintego.key.pem', 'utf8');
+const certificate = fs.readFileSync('sslcert/wintventory.wintego.pem', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 /**
  * Function which protect on server api using File-Store-Session
  * @param req
@@ -71,8 +77,8 @@ let Applicants = require('./routes/Applicants');
 
 app.use('/api',sessionHandler, Users);
 app.use('/api',sessionHandler,Applicants);
+
 let staticPath = path.join(__dirname,'public/cv');
-winston.info(staticPath);
 app.use(morgan('combined', { stream: winston.stream }));
 
 app.use("/public/cv", sessionHandler, express.static(staticPath));
@@ -85,10 +91,19 @@ if (process.env.NODE_ENV === 'production') {
 
 }
 
-app.listen(process.env.PORT, process.env.HOST, () => {
-    winston.info("Server is running: "
-        +process.env.HOST
-        +":"
-        + process.env.PORT);
-    winston.info("Build: "+ process.env.NODE_ENV)
-});
+const httpsServer = https.createServer(credentials, app)
+    .listen(process.env.PORT, process.env.HOST, function () {
+        winston.info("Server is running: "
+            +process.env.HOST
+            +":"
+            + process.env.PORT);
+        winston.info("Build: "+ process.env.NODE_ENV)
+    });
+
+// app.listen(process.env.PORT, process.env.HOST, () => {
+//     winston.info("Server is running: "
+//         +process.env.HOST
+//         +":"
+//         + process.env.PORT);
+//     winston.info("Build: "+ process.env.NODE_ENV)
+// });

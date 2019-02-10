@@ -137,7 +137,7 @@ applicants.get('/applicants', async (req, res) => {
             let domain = process.env.DOMAIN ? process.env.DOMAIN : 'localhost'
             winston.info(JSON.stringify(applicants, null, 4));
             for(let i=0; i< applicants.length; i++ ) {
-                applicants[i].cv = "http://"+domain
+                applicants[i].cv = "https://"+domain
                     +":"
                     +process.env.PORT
                     +"/public/cv/"

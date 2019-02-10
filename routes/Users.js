@@ -146,7 +146,7 @@ users.post('/forgotpassword', async (req, res) => {
                     "You received this email because we received a request for reset the password for your account.<br>",
                     "If you did not request reset the password for your account, you can safely delete this email.<br>",
                     "In order to reset your account password please click on the attached Link:<br>",
-                    "http://"+process.env.DOMAIN+":"+process.env.PORT+"/reset/"+token+"<br>"
+                    "https://"+process.env.DOMAIN+":"+process.env.PORT+"/reset/"+token+"<br>"
                 ].join(''));
 
             mailer.smtpTransport.sendMail(mailOptions, function(error, response) {
