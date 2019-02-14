@@ -14,8 +14,8 @@ const path = require('path');
 process.env.PORT = process.env.PORT || 5000;
 process.env.HOST = process.env.HOST || 'localhost';
 
-const privateKey  = fs.readFileSync('sslcert/wintventory.wintego.key.pem', 'utf8');
-const certificate = fs.readFileSync('sslcert/wintventory.wintego.pem', 'utf8');
+const privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+const certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 /**
  * Function which protect on server api using File-Store-Session
@@ -98,6 +98,7 @@ const httpsServer = https.createServer(credentials, app)
             +":"
             + process.env.PORT);
         winston.info("Build: "+ process.env.NODE_ENV)
+        winston.info("Mongo Uri: "+ mongoURI)
     });
 
 // app.listen(process.env.PORT, process.env.HOST, () => {
