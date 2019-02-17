@@ -57,7 +57,7 @@ users.post('/register',  async (req, res) => {
                             if (error) {
                                 winston.error(error)
                             } else {
-                                winston.info("Mail sent: " + response.message)
+                                winston.info("Mail sent: " + userData.userName)
                             }
                         });
                         res.json({message: user.userName + ' registered'})
