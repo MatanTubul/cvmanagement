@@ -1,5 +1,26 @@
 version: "2"
 services:
+  cvmangement:
+    container_name: cvmanagement_app
+    restart: always
+    build: .
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "cvmanagement:192.168.3.149"
+      - "cvmanagement:192.168.10.131"
+      - "cvmanagement:192.168.1.113"
+    links:
+      - mongo
+    volumes:
+      - /home/cvmangement/public/cv:/home/cvmangement/public/cv
+      - /home/cvmangement/logs:/home/cvmangement/logs
+    depends_on:
+      - mongo
+    environment:
+      WAIT_HOSTS: mongo:27017
+
+
   mongo:
     container_name: mongo
     restart: always
@@ -8,24 +29,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=edco123
     volumes:
-      - ./data/db:/data/db
+      - /home/cvmangement/mongo/db:/home/cvmangement/mongo/db
       - ./mongo:/docker-entrypoint-initdb.d
     ports:
       - "27017:27017"
     command: mongod --smallfiles
 
-  cvmangement:
-      container_name: cvmanagement_app
-      restart: always
-      build: .
-      ports:
-        - "5000:5000"
-      extra_hosts:
-        - "cvmanagement:192.168.3.149"
-      links:
-        - mongo
-      volumes:
-        - ./home/cvmangement/public/cv:/home/cvmangement/public/cv
-        - ./home/cvmangement/logs:/home/cvmangement/logs
-      depends_on:
-        - mongo

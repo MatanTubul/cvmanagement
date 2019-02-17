@@ -175,9 +175,7 @@ users.get('/verifytoken', async (req, res, next) => {
     try {
         let user =  await User.findOne({
             resetPasswordToken: req.query.resetPasswordToken
-        })
-            .where('resetPasswordExpires').gt(new Date())
-            .select('userName');
+        }).where('resetPasswordExpires').gt(new Date()).select('userName');
 
         winston.info(user);
 

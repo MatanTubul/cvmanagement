@@ -25,10 +25,13 @@ const credentials = {key: privateKey, cert: certificate};
  */
 function sessionHandler(req, res, next) {
     winston.info(req.url);
+    winston.info(req.path);
     if(req.url === '/login' ||
         req.url === '/forgotpassword' ||
-        req.url === '/logout'
+        req.url === '/logout' ||
+        req.url.startsWith('/verifytoken')
     ) {
+        winston.info("skip on session check")
         next()
     }else {
         if (req.session.sessionID) {
@@ -75,21 +78,20 @@ mongoose.connect(mongoURI, {useNewUrlParser: true})
 let Users = require('./routes/Users');
 let Applicants = require('./routes/Applicants');
 
+app.use(express.static(path.join(__dirname,'./client/build')));
+let staticPath = path.join(__dirname,'public/cv');
+app.use("/public/cv", sessionHandler, express.static(staticPath));
+
 app.use('/api',sessionHandler, Users);
 app.use('/api',sessionHandler,Applicants);
 
-let staticPath = path.join(__dirname,'public/cv');
 app.use(morgan('combined', { stream: winston.stream }));
 
-app.use("/public/cv", sessionHandler, express.static(staticPath));
 
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname,'./client/build')));
-    app.get("*", function (req, res) {
-        res.attachment(path.resolve(__dirname, './client/build', 'index.html'));
-    })
+app.get("*", function (req, res) {
+    res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+})
 
-}
 
 const httpsServer = https.createServer(credentials, app)
     .listen(process.env.PORT, process.env.HOST, function () {
