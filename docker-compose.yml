@@ -29,7 +29,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=edco123
     volumes:
-      - /home/cvmangement/mongo/db:/home/cvmangement/mongo/db
+      - /home/cvmangement/mongo/db:/data/db
       - ./mongo:/docker-entrypoint-initdb.d
     ports:
       - "27017:27017"
