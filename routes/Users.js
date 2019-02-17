@@ -17,7 +17,34 @@ function genuuid() {
     sha.update(Math.random().toString());
     return sha.digest('hex');
 }
-
+users.post('/admin', async  (req, res) => {
+    try {
+        let user =  await User.findOne({});
+        if(!user) {
+            const userData = {
+                firstName: "Admin",
+                lastName: "Admin",
+                userName: "mtubul@wintego.com",
+                password: "zaq1cde2"
+            };
+            bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS , (err, hash) => {
+                userData.password = hash;
+                User.create(userData)
+                    .then(user => {
+                        res.json({message: user.userName + ' registered'})
+                    })
+                    .catch(err => {
+                        res.json('error: ' + err)
+                    })
+            })
+        }else {
+            res.json({message:"Admin user already exist"})
+        }
+    }catch (err) {
+        winston.error(err);
+        res.sendStatus(500).send('error: ' + err)
+    }
+});
 /**
  *  Register a new user
  */

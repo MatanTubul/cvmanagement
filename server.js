@@ -29,7 +29,8 @@ function sessionHandler(req, res, next) {
     if(req.url === '/login' ||
         req.url === '/forgotpassword' ||
         req.url === '/logout' ||
-        req.url.startsWith('/verifytoken')
+        req.url.startsWith('/verifytoken') ||
+        req.url === '/admin'
     ) {
         winston.info("skip on session check")
         next()
@@ -102,7 +103,6 @@ const httpsServer = https.createServer(credentials, app)
         winston.info("Build: "+ process.env.NODE_ENV)
         winston.info("Mongo Uri: "+ mongoURI)
     });
-
 // app.listen(process.env.PORT, process.env.HOST, () => {
 //     winston.info("Server is running: "
 //         +process.env.HOST
