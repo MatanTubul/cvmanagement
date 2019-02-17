@@ -17,34 +17,8 @@ function genuuid() {
     sha.update(Math.random().toString());
     return sha.digest('hex');
 }
-users.post('/admin', async  (req, res) => {
-    try {
-        let user =  await User.findOne({});
-        if(!user) {
-            const userData = {
-                firstName: "Admin",
-                lastName: "Admin",
-                userName: "mtubul@wintego.com",
-                password: "zaq1cde2"
-            };
-            bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS , (err, hash) => {
-                userData.password = hash;
-                User.create(userData)
-                    .then(user => {
-                        res.json({message: user.userName + ' registered'})
-                    })
-                    .catch(err => {
-                        res.json('error: ' + err)
-                    })
-            })
-        }else {
-            res.json({message:"Admin user already exist"})
-        }
-    }catch (err) {
-        winston.error(err);
-        res.sendStatus(500).send('error: ' + err)
-    }
-});
+
+
 /**
  *  Register a new user
  */
@@ -172,9 +146,9 @@ users.post('/forgotpassword', async (req, res) => {
                 ["Hello " +user.firstName+ ",<br><br>",
                     "You received this email because we received a request for reset the password for your account.<br>",
                     "If you did not request reset the password for your account, you can safely delete this email.<br>",
-                    "In order to reset your account password please click on the attached Link:<br>",
-                    "https://"+process.env.DOMAIN+":"+process.env.PORT+"/reset/"+token+"<br>"
-                ].join(''));
+                    "In order to reset your account password please click on the attached Link:<br><br>",
+                    '<a href="https://'+process.env.DOMAIN+':'+process.env.PORT+'/reset/'+token+'">Reset your password</a><br>'
+                ].join(''),'');
 
             mailer.smtpTransport.sendMail(mailOptions, function(error, response) {
                 if (error) {
@@ -357,3 +331,30 @@ users.put('/logout', async  (req,res) => {
 });
 
 module.exports = users;
+module.exports.adminUser = generateAdmin = async function() {
+    try {
+        let user =  await User.findOne({});
+        if(!user) {
+            const userData = {
+                firstName: "Admin",
+                lastName: "Admin",
+                userName: "mtubul@wintego.com",
+                password: "zaq1cde2"
+            };
+            bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS , (err, hash) => {
+                userData.password = hash;
+                User.create(userData)
+                    .then(user => {
+                        winston.info("Admin user generated")
+                    })
+                    .catch(err => {
+                        winston.info(err)
+                    })
+            })
+        }else {
+            winston.info("Admin user is already exists")
+        }
+    }catch (err) {
+        winston.error(err);
+    }
+};

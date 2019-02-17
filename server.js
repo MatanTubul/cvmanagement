@@ -1,5 +1,4 @@
 const fs = require('fs');
-const http = require('http');
 const https = require('https');
 const express = require("express");
 const cors = require("cors");
@@ -103,6 +102,9 @@ const httpsServer = https.createServer(credentials, app)
         winston.info("Build: "+ process.env.NODE_ENV)
         winston.info("Mongo Uri: "+ mongoURI)
     });
+httpsServer.on('listening',function () {
+    Users.adminUser()
+});
 // app.listen(process.env.PORT, process.env.HOST, () => {
 //     winston.info("Server is running: "
 //         +process.env.HOST
