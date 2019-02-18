@@ -24,7 +24,6 @@ const credentials = {key: privateKey, cert: certificate};
  */
 function sessionHandler(req, res, next) {
     winston.info(req.url);
-    winston.info(req.path);
     if(req.url === '/login' ||
         req.url === '/forgotpassword' ||
         req.url === '/logout' ||
