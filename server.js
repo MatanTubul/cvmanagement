@@ -28,7 +28,8 @@ function sessionHandler(req, res, next) {
         req.url === '/forgotpassword' ||
         req.url === '/logout' ||
         req.url.startsWith('/verifytoken') ||
-        req.url === '/admin'
+        req.url === '/admin' ||
+        req.url === '/resetpassword'
     ) {
         winston.info("skip on session check")
         next()
