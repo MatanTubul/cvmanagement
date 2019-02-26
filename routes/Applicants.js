@@ -7,20 +7,23 @@ const multer  = require('multer');
 const pathBase = process.env.PWD;
 const dateFormat = require('dateformat');
 applicants.use(cors());
+cvFileTypes = {
+    'application/pdf':true,
+    'application/msword':true,
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':true
+};
 const storage = multer.diskStorage({
     destination: function (req,file,cb) {
         console.log(req.body.mail);
         cb(null, pathBase+'/public/cv/')
     },
     filename: function (req, resume, cb) {
-        if (resume.mimetype === 'application/pdf' ||
-            resume.mimetype === 'application/msword' ||
-            resume.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        ) {
+        if (resume.mimetype in cvFileTypes) {
             cb(null, req.body.cv)
         } else {
             winston.error("File type:"+ resume.mimetype+
                 " is incorrect")
+            cb(null, false)
         }
     }
 
@@ -35,7 +38,6 @@ const upload = multer({
  * Add a new HR applicant including Resume file
  */
 applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
-
     winston.info("add applicant");
     try {
         let applicantMail = req.body.mail;
