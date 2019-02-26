@@ -14,8 +14,13 @@ const storage = multer.diskStorage({
     },
     filename: function (req, resume, cb) {
         if (resume.mimetype === 'application/pdf' ||
-            resume.mimetype === 'application/msword') {
+            resume.mimetype === 'application/msword' ||
+            resume.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ) {
             cb(null, req.body.cv)
+        } else {
+            winston.error("File type:"+ resume.mimetype+
+                " is incorrect")
         }
     }
 
