@@ -34,14 +34,16 @@ const ApplicantSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ['Research', 'Development', 'Administration', 'QA', 'DevOps', 'Projects', 'Sales', 'Presale', 'CSM',
-        'Seniors']
+        enum: ['Research', 'Development', 'Administration', 'QA', 'DevOps'
+            , 'Projects', 'Sales', 'Presale', 'CSM',
+        'Seniors','Frontend Developer','Backend Developer']
     },
     stage: {
         type: String,
         required: true,
         enum: ['Exams', 'HR','Eli interview', 'Yuval interview', 'Nhevo interview', 'Escape room', 'Presentation' ,
-        'References', 'Background check', 'Job offer', 'Polygraph', 'Declined']
+        'References', 'Background check', 'Job offer', 'Polygraph',
+            'Declined']
     },
     cv: {
         type: String,

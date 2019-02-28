@@ -23,7 +23,8 @@ const storage = multer.diskStorage({
         } else {
             winston.error("File type:"+ resume.mimetype+
                 " is incorrect")
-            cb(null, false)
+            req.fileValidationError = "Forbidden file";
+            cb(null,req.fileValidationError)
         }
     }
 
@@ -38,47 +39,55 @@ const upload = multer({
  * Add a new HR applicant including Resume file
  */
 applicants.post('/addapplicant', upload.single('resume'), async (req, res) => {
-    winston.info("add applicant");
-    try {
-        let applicantMail = req.body.mail;
-        let applicant = await Applicant.findOne({
-            mail: applicantMail
-        });
-        if(!applicant) {
-            let now = new Date();
-            let data = {
-                firstName: req.body.fname,
-                lastName: req.body.lname,
-                mobile: req.body.mobile,
-                email: req.body.mail,
-                citizenship: req.body.citizenship,
-                address: req.body.address,
-                role: req.body.role,
-                stage: req.body.stage,
-                appliedby: req.body.appliedby,
-                cv: req.body.cv,
-                note: req.body.note,
-                startDate: dateFormat(now, "dd-mm-yyyy")
-            };
-            winston.info("Add applicant:" +JSON.stringify(data, null, 2));
-            const newApplicant =  new Applicant(data);
-            newApplicant.save(err => {
-                if (err) {
-                    winston.error(err);
-                    res.status(500).json({'error':err})
-                } else {
-                    winston.info("Saved successfully");
-                    res.status(200).json({message:'success'})
-                }
-            })
-        }else {
-            winston.info("Applicant "+ applicantMail + " already exists");
-            res.json({error: 'User already exists'})
-        }
-    } catch (err) {
-        winston.error(err);
-        res.send('error: ' + err)
+    winston.info(req.fileValidationError)
+    if(req.fileValidationError) {
+        res.status(404).json({message:'File is forbidden'})
     }
+    else {
+        winston.info("add applicant");
+        try {
+            let applicantMail = req.body.mail;
+            let applicant = await Applicant.findOne({
+                mail: applicantMail
+            });
+            if(!applicant) {
+                winston.info(req.fileValidationError)
+                let now = new Date();
+                let data = {
+                    firstName: req.body.fname,
+                    lastName: req.body.lname,
+                    mobile: req.body.mobile,
+                    email: req.body.mail,
+                    citizenship: req.body.citizenship,
+                    address: req.body.address,
+                    role: req.body.role,
+                    stage: req.body.stage,
+                    appliedby: req.body.appliedby,
+                    cv: req.body.cv,
+                    note: req.body.note,
+                    startDate: dateFormat(now, "dd-mm-yyyy")
+                };
+                winston.info("Add applicant:" +JSON.stringify(data, null, 2));
+                const newApplicant =  new Applicant(data);
+                newApplicant.save(err => {
+                    if (err) {
+                        winston.error(err);
+                        res.status(500).json({'error':err})
+                    } else {
+                        winston.info("Saved successfully");
+                        res.status(200).json({message:'success'})
+                    }
+                })
+            }else {
+                winston.info("Applicant "+ applicantMail + " already exists");
+                res.json({error: 'User already exists'})
+            }
+        } catch (err) {
+            winston.error(err);
+            res.send('error: ' + err)
+        }
+    }
+
 });
 
 /**
