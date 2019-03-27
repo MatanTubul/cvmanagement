@@ -68,7 +68,8 @@ app.use(
 );
 
 app.use(bodyParser.json({limit:'50mb'}));
-let mongoHost = process.env.NODE_ENV ? 'mongo' : "localhost"
+winston.info(process.env.NODE_ENV)
+let mongoHost = process.env.NODE_ENV === 'production' ? 'mongo' : "localhost"
 const mongoURI = 'mongodb://root:edco123@'+mongoHost+':27017/cvmanagment';
 
 mongoose.connect(mongoURI, {useNewUrlParser: true})
