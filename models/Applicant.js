@@ -36,7 +36,7 @@ const ApplicantSchema = new Schema({
         required: true,
         enum: ['Research', 'Development', 'Administration', 'QA', 'DevOps'
             , 'Projects', 'Sales', 'Presale', 'CSM',
-        'Seniors','Frontend Developer','Backend Developer']
+        'Seniors','Frontend Developer','Backend Developer', 'Product']
     },
     stage: {
         type: String,
