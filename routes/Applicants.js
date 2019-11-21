@@ -160,7 +160,6 @@ applicants.get('/applicants', async (req, res) => {
                     + applicants[i].cv
             }
 
-            winston.info(applicants)
             res.json({data: applicants})
         }else {
             res.json({error: "Applicants list is empty or unavailable"})
